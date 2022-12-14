@@ -56,15 +56,15 @@ begin
                 flag := 1;
                 while (flag = 1) loop
                     s_display <= "0010101";
-                    wait for 1 s;
-                    s_display <= "1110110";
+                    s_display <= "1110110" after 1e9 ns;
+                    s_display <= "0001000" after 1e9 ns;
                 end loop;
             elsif (estado_ascensor = "11") then --11 representa activo bajando
                 flag := 2;
                 while (flag = 2) loop 
                     s_display <= "0100011";
-                    wait for 1 s;
-                    s_display <= "0111110";
+                    s_display <= "0111110" after 1e9 ns;
+                    s_display <= "1000000" after 1e9 ns;
                 end loop;
             end if;
         end if;
