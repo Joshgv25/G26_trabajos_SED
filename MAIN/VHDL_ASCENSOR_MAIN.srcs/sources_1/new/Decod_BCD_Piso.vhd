@@ -41,7 +41,7 @@ end Decod_BCD_Piso;
 
 architecture Dataflow of Decod_BCD_Piso is
 begin
-    WITH code SELECT
+    WITH n_bin SELECT
         n_bcd <= "0000001" WHEN "0000",
                  "1001111" WHEN "0001",
                  "0010010" WHEN "0010",
