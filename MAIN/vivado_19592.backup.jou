@@ -1,0 +1,14 @@
+#-----------------------------------------------------------
+# Vivado v2021.1 (64-bit)
+# SW Build 3247384 on Thu Jun 10 19:36:33 MDT 2021
+# IP Build 3246043 on Fri Jun 11 00:30:35 MDT 2021
+# Start of session at: Thu Dec 15 00:35:58 2022
+# Process ID: 19592
+# Current directory: C:/Users/joshg/Desktop/Trabajo VHDL/ascensor_VHDL_G26/MAIN
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent25648 C:\Users\joshg\Desktop\Trabajo VHDL\ascensor_VHDL_G26\MAIN\VHDL_ASCENSOR_MAIN.xpr
+# Log file: C:/Users/joshg/Desktop/Trabajo VHDL/ascensor_VHDL_G26/MAIN/vivado.log
+# Journal file: C:/Users/joshg/Desktop/Trabajo VHDL/ascensor_VHDL_G26/MAIN\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project {C:/Users/joshg/Desktop/Trabajo VHDL/ascensor_VHDL_G26/MAIN/VHDL_ASCENSOR_MAIN.xpr}
+update_compile_order -fileset sources_1
