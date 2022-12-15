@@ -42,16 +42,10 @@ end Decod_BCD_Piso;
 architecture Dataflow of Decod_BCD_Piso is
 begin
     WITH n_bin SELECT
-        n_bcd <= "0000001" WHEN "0000",
-                 "1001111" WHEN "0001",
-                 "0010010" WHEN "0010",
-                 "0000110" WHEN "0011",
-                 "1001100" WHEN "0100",
-                 "0100100" WHEN "0101",
-                 "0100000" WHEN "0110",
-                 "0001111" WHEN "0111",
-                 "0000000" WHEN "1000",
-                 "0000100" WHEN "1001",
-                 "1111110" WHEN others;
+        n_bcd <= "0000001" WHEN "0001", --Muestra el 0 cuando estamos en el piso 0
+                 "1001111" WHEN "0010", --Muestra el 1 cuando estamos en el piso 1
+                 "0010010" WHEN "0100", --Muestra el 2 cuando estamos en el piso 2
+                 "0000110" WHEN "1000", --Muestra el 3 cuando estamos en el piso 3
+                 "1111110" WHEN others; --Si por algún casusl hubiese un error, se muestra una linea
 
 end Dataflow;
