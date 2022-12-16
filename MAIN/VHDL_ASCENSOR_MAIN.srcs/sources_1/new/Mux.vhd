@@ -42,19 +42,19 @@ entity Mux_4a1 is
 end Mux_4a1;
 
 architecture Behavioral of Mux_4a1 is
-
+signal s_salida : std_logic_vector (salida'range);
 begin
     mux : process (sel)
     begin
         if (sel = "00") then
-            salida <= in1;
+            s_salida <= in1;
         elsif (sel = "01") then
-            salida <= in2;
+            s_salida <= in2;
         elsif (sel = "10") then
-            salida <= in3;
+            s_salida <= in3;
         else
             salida <= "1111110";
         end if;
     end process;
-
+salida <= s_salida;
 end Behavioral;
