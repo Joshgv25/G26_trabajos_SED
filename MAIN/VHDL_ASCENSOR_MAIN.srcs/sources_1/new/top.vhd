@@ -21,7 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use iEEE.numeric_std.all;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -56,6 +56,68 @@ architecture Structural of top is
             validez : out std_logic;
             sig_salida: out std_logic_vector(3 downto 0)
         );
+    end component;
+    
+    component Counter 
+         Port ( clk : in STD_LOGIC;
+           reset_n : in STD_LOGIC;
+           salida : out unsigned (1 downto 0));
+    end component;
+    
+    component Decod_BCD_Piso
+         Port ( n_bin : in STD_LOGIC_VECTOR (3 downto 0);
+           n_bcd : out STD_LOGIC_VECTOR (6 downto 0));
+           
+    end component;
+
+    component Decod_sel
+         Port ( in_sel : in STD_LOGIC_VECTOR (1 downto 0);
+           out_sel : out STD_LOGIC_VECTOR (7 downto 0)); --( bits, como la cantidad de displays que hay
+    end component;
+    
+    component FSM_animacion
+        Port ( clk : in STD_LOGIC;
+           reset_n : in STD_LOGIC;
+           in_motor : in STD_LOGIC_VECTOR (1 downto 0);
+           out_bcd : out STD_LOGIC_VECTOR (6 downto 0));
+    end component;
+    
+    component FSM_ascensor
+        port(
+    		--entradas
+			clk :   in  std_logic; --reloj
+   			reset_n : in std_logic;  --vuelve al piso 0 siempre
+   			pAct:   in std_logic_vector(3 downto 0); --piso actual
+        	pCall:  in std_logic_vector(3 downto 0); --piso del que llaman (salida del filtro)
+   			filtro: in std_logic; --si llega un 1, tiene en cuenta a pAct
+   			rearme: in std_logic;
+     		--salidas
+  			motor : out std_logic_vector(1 downto 0); --un bit para el encendido, otro para saber si sube (1) o baja (0)
+  		 	puerta: out std_logic --1 si esta abierta, 0 si esta cerrada
+       );
+    end component;
+    
+    component Mux_4a1 
+         Port ( sel : in STD_LOGIC_VECTOR (1 downto 0); --La entrada de selección vendrá de la salida de un contador
+           in1 : in STD_LOGIC_VECTOR (6 downto 0);
+           in2 : in STD_LOGIC_VECTOR (6 downto 0);
+           in3 : in STD_LOGIC_VECTOR (6 downto 0);
+           salida : out STD_LOGIC_VECTOR (6 downto 0));
+    end component;
+    
+    component clk_divisor
+         Generic (frec: integer:=50000000);  -- default value is for 2hz
+         Port ( clk : in  STD_LOGIC;
+           reset : in  STD_LOGIC;
+           clk_out : out  STD_LOGIC);
+    end component;
+    
+    component edge_ctrl
+          port (
+        CLK : in std_logic;
+        SYNC_IN : in std_logic;
+        EDGE : out std_logic
+    );
     end component;
     
     signal vector_sincronized, vector_filtrado: std_logic_vector(3 downto 0);
