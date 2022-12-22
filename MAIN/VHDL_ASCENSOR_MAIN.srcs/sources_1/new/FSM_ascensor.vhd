@@ -131,7 +131,7 @@ begin
       		begin 
             	case current_state is
                 		when s0 =>
-                        	motor <= "0x"; --motor apagado, ni sube ni baja
+                        	motor <= "00"; --motor apagado, ni sube ni baja
                             puerta <= '1'; --puerta abierta
       					when s1 =>
                         	motor <= "11"; --motor encendido y subiendo
@@ -143,7 +143,7 @@ begin
                         	motor <= "10"; --motor encendido, bajo al 0
                             puerta <= '1'; --puerta abierta
                         when s4 =>
-                        	motor <= "0x"; --motor apagado, no sube ni baja
+                        	motor <= "00"; --motor apagado, no sube ni baja
                             puerta <= '0'; --puerta cerrada por seguridad
       			end case;
       end process;
