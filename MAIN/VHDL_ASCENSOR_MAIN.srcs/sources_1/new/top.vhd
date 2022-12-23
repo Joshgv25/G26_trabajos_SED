@@ -21,7 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use iEEE.numeric_std.all;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -35,8 +35,13 @@ entity top is
     Port (
         button: in std_logic_vector(3 downto 0);
         switch: in std_logic_vector(3 downto 0);
-        CLK: in std_logic 
-    
+        CLK: in std_logic;
+        reset_n: in std_logic;
+        rearme:in std_logic;
+        
+        puerta: out std_logic;
+        disp_sel: out std_logic_vector(7 downto 0);
+        disp_bcd: out std_logic_vector(6 downto 0)
      );
 end top;
 
@@ -58,14 +63,92 @@ architecture Structural of top is
         );
     end component;
     
-    signal vector_sincronized, vector_filtrado: std_logic_vector(3 downto 0);
+    component Counter 
+         Port ( clk : in STD_LOGIC;
+           reset_n : in STD_LOGIC;
+           salida : out std_logic_vector(1 downto 0));
+    end component;
+    
+    component Decod_BCD_Piso
+         Port ( n_bin : in STD_LOGIC_VECTOR (3 downto 0);
+           n_bcd : out STD_LOGIC_VECTOR (6 downto 0));
+           
+    end component;
+
+    component Decod_sel
+         Port ( in_sel : in STD_LOGIC_VECTOR (1 downto 0);
+           out_sel : out STD_LOGIC_VECTOR (7 downto 0)); --( bits, como la cantidad de displays que hay
+    end component;
+    
+    component FSM_animacion
+        Port ( clk : in STD_LOGIC;
+           reset_n : in STD_LOGIC;
+           in_motor : in STD_LOGIC_VECTOR (1 downto 0);
+           out_bcd : out STD_LOGIC_VECTOR (6 downto 0));
+    end component;
+    
+    component FSM_ascensor
+        port(
+    		--entradas
+			clk :   in  std_logic; --reloj
+   			reset_n : in std_logic;  --vuelve al piso 0 siempre
+   			pAct:   in std_logic_vector(3 downto 0); --piso actual
+        	pCall:  in std_logic_vector(3 downto 0); --piso del que llaman (salida del filtro)
+   			filtro: in std_logic; --si llega un 1, tiene en cuenta a pAct
+   			rearme: in std_logic;
+     		--salidas
+  			motor : out std_logic_vector(1 downto 0); --un bit para el encendido, otro para saber si sube (1) o baja (0)
+  		 	puerta: out std_logic --1 si esta abierta, 0 si esta cerrada
+       );
+    end component;
+    
+    component Mux_4a1 
+         Port ( sel : in STD_LOGIC_VECTOR (1 downto 0); --La entrada de selección vendrá de la salida de un contador
+           in1 : in STD_LOGIC_VECTOR (6 downto 0);
+           in2 : in STD_LOGIC_VECTOR (6 downto 0);
+           in3 : in STD_LOGIC_VECTOR (6 downto 0);
+           salida : out STD_LOGIC_VECTOR (6 downto 0));
+    end component;
+    
+    component clk_divisor
+         Generic (frec: integer:=50000000);  -- default value is for 2hz
+         Port ( clk : in  STD_LOGIC;
+           reset : in  STD_LOGIC;
+           clk_out : out  STD_LOGIC);
+    end component;
+    
+    component edge_ctrl
+          port (
+        CLK : in std_logic;
+        SYNC_IN : in std_logic;
+        EDGE : out std_logic
+    );
+    end component;
+    
+    signal sync_switch, vector_filtrado: std_logic_vector(3 downto 0);
+    signal sync_button: std_logic_vector (3 downto 0);
+    signal edges, edgeb: std_logic_vector(3 downto 0);
     signal sal_motor: std_logic_vector(1 downto 0); -------------------------------salida del motor de la fsm
     signal correcto: std_logic;
+    signal reloj_div:std_logic;
+    signal out_counter:std_logic_vector(1 downto 0);
+    signal pisoact_bcd, pisoobj_bcd, anim_bcd: std_logic_vector(6 downto 0);
     --variable count: natural;
 begin
     gen: for i in 3 downto 0 generate --el for genera 4 instancias para tratar los 4 switches
-        sin: Sincronizador port map(CLK => CLK, ASYNC_IN =>switch(i), SYNC_OUT => vector_sincronized(i));
+        sins: Sincronizador port map(CLK => CLK, ASYNC_IN =>switch(i), SYNC_OUT => sync_switch(i));
+        sinb: Sincronizador port map(CLK => CLK, ASYNC_IN =>button(i), SYNC_OUT => sync_button(i));
+        edgecrtls: edge_ctrl port map(CLK => CLK, SYNC_IN => sync_switch(i), EDGE =>edges(i));
+        edgecrtlb: edge_ctrl port map(CLK => CLK, SYNC_IN => sync_button(i), EDGE =>edgeb(i));
     end generate;
-    Inst_filtro: filtro port map(motor => sal_motor, switch_bit => vector_sincronized, validez => correcto, sig_salida => vector_filtrado);
-
+    Inst_filtro: filtro port map(motor => sal_motor, switch_bit => edges, validez => correcto, sig_salida => vector_filtrado);
+    Inst_FSM_ascensor: FSM_ascensor port map(clk=>CLK,reset_n=>reset_n, pAct=>edges,pCall=>edgeb,filtro=>correcto,rearme=>rearme,motor=>sal_motor,puerta=>puerta);
+    Inst_decod_pisoact: Decod_BCD_Piso port map(n_bin=>edges,n_bcd=>pisoact_bcd);
+    Inst_decod_pisoobj: Decod_BCD_Piso port map(n_bin=>edgeb,n_bcd=>pisoobj_bcd);
+    Inst_animacion: FSM_animacion port map(clk=>CLK,reset_n=>reset_n,in_motor=>sal_motor,out_bcd=>anim_bcd);
+    Inst_counter: Counter port map(clk=>reloj_div, reset_n=>reset_n,salida=>out_counter);
+    Inst_decodsel: decod_sel port map(in_sel=>out_counter,out_sel=>disp_sel);
+    Inst_mux: Mux_4a1 port map(sel=>out_counter,in1=>pisoact_bcd,in2=>pisoobj_bcd,in3=>anim_bcd,salida=>disp_bcd);
+    Inst_clkdiv: clk_divisor generic map(frec=>50000000) port map(clk=>CLK,reset=>reset_n,clk_out=>reloj_div);
+     
 end Structural;
