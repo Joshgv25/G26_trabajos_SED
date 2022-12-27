@@ -48,7 +48,7 @@ architecture Behavioral of FSM_ascensor is
 type estados is(s0, s1, s2, s3, s4); --s0 reposo, s1 subir, s2 bajar, s3 emergencia (ir al 0), s4 averia
     signal current_state: estados;       --estado actual
     signal next_state: estados;          --estado siguiente
-    signal vector_switch: std_logic_vector(3 downto 0); --
+    signal vector_switch: std_logic_vector(3 downto 0); --nos indica el piso en el que estamos
 begin 
       process(filtro)--------------------------------------------------------------------------------------
       begin 
