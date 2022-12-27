@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 27.12.2022 20:28:11
+-- Create Date: 27.12.2022 21:27:53
 -- Design Name: 
--- Module Name: Decod_BCD_Piso_tb - Behavioral
+-- Module Name: Counter_tb - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -21,7 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use iEEE.numeric_std.all;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -31,18 +31,20 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity Decod_BCD_Piso_tb is
+entity Counter_tb is
 --  Port ( );
-end Decod_BCD_Piso_tb;
+end Counter_tb;
 
-architecture tb of Decod_BCD_Piso_tb is
-    component Decod_BCD_Piso
-        port (n_bin : in std_logic_vector (3 downto 0);
-              n_bcd : out std_logic_vector (6 downto 0));
+architecture Behavioral of Counter_tb is
+  component Counter
+        port (clk     : in std_logic;
+              reset_n : in std_logic;
+              salida  : out unsigned (1 downto 0));
     end component;
 
-    signal n_bin : std_logic_vector (3 downto 0);
-    signal n_bcd : std_logic_vector (6 downto 0);
+    signal clk     : std_logic;
+    signal reset_n : std_logic;
+    signal salida  : unsigned (1 downto 0);
 
     constant TbPeriod : time := 1000 ns; -- EDIT Put right period here
     signal TbClock : std_logic := '0';
@@ -50,31 +52,38 @@ architecture tb of Decod_BCD_Piso_tb is
 
 begin
 
-    dut : Decod_BCD_Piso
-    port map (n_bin => n_bin,
-              n_bcd => n_bcd);
+    dut : Counter
+    port map (clk     => clk,
+              reset_n => reset_n,
+              salida  => salida);
 
     -- Clock generation
-    TbClock <= not TbClock after TbPeriod/2 when TbSimEnded /= '1' else '0';
+    TbClock <= not TbClock after TbPeriod/10 when TbSimEnded /= '1' else '0';
 
-    --  EDIT: Replace YOURCLOCKSIGNAL below by the name of your clock as I haven't guessed it
-    --  YOURCLOCKSIGNAL <= TbClock;
+    -- EDIT: Check that clk is really your main clock signal
+    clk <= TbClock;
 
     stimuli : process
     begin
         -- EDIT Adapt initialization as needed
-        n_bin <= (others => '0');
-        wait for 0.10*TbPeriod;
-        n_bin <= "0001";
-        wait for 0.10*TbPeriod;
-        n_bin <= "0010";
-        wait for 0.10*TbPeriod;
-        n_bin <= "0100";
-        wait for 0.10*TbPeriod;
-        n_bin <= "1000";
-        wait for TbPeriod;
+
+        -- Reset generation
+        -- EDIT: Check that reset_n is really your reset signal
+        reset_n <= '0';
+        wait for 100 ns;
+        reset_n <= '1';
+        wait for 100 ns;
+
+        -- EDIT Add stimuli here
+        
+        wait for 100 * TbPeriod;
+
+        -- Stop the clock and hence terminate the simulation
         TbSimEnded <= '1';
         wait;
     end process;
 
-end tb;
+
+
+
+end Behavioral;

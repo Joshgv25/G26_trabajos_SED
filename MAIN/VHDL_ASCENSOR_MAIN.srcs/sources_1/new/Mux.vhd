@@ -53,7 +53,7 @@ begin
         elsif (sel = "10") then
             s_salida <= in3;
         else
-            salida <= "1111110";
+            s_salida <= "1111110";
         end if;
     end process;
 salida <= s_salida;

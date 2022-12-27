@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 27.12.2022 20:28:11
+-- Create Date: 27.12.2022 20:58:35
 -- Design Name: 
--- Module Name: Decod_BCD_Piso_tb - Behavioral
+-- Module Name: Decod_sel_tb - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,18 +31,18 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity Decod_BCD_Piso_tb is
+entity Decod_sel_tb is
 --  Port ( );
-end Decod_BCD_Piso_tb;
+end Decod_sel_tb;
 
-architecture tb of Decod_BCD_Piso_tb is
-    component Decod_BCD_Piso
-        port (n_bin : in std_logic_vector (3 downto 0);
-              n_bcd : out std_logic_vector (6 downto 0));
+architecture tb of Decod_sel_tb is
+ component Decod_sel
+        port (in_sel  : in std_logic_vector (1 downto 0);
+              out_sel : out std_logic_vector (7 downto 0));
     end component;
 
-    signal n_bin : std_logic_vector (3 downto 0);
-    signal n_bcd : std_logic_vector (6 downto 0);
+    signal in_sel  : std_logic_vector (1 downto 0);
+    signal out_sel : std_logic_vector (7 downto 0);
 
     constant TbPeriod : time := 1000 ns; -- EDIT Put right period here
     signal TbClock : std_logic := '0';
@@ -50,9 +50,9 @@ architecture tb of Decod_BCD_Piso_tb is
 
 begin
 
-    dut : Decod_BCD_Piso
-    port map (n_bin => n_bin,
-              n_bcd => n_bcd);
+    dut : Decod_sel
+    port map (in_sel  => in_sel,
+              out_sel => out_sel);
 
     -- Clock generation
     TbClock <= not TbClock after TbPeriod/2 when TbSimEnded /= '1' else '0';
@@ -63,16 +63,16 @@ begin
     stimuli : process
     begin
         -- EDIT Adapt initialization as needed
-        n_bin <= (others => '0');
+        in_sel <= (others => '1');
         wait for 0.10*TbPeriod;
-        n_bin <= "0001";
+        in_sel <= "00";
         wait for 0.10*TbPeriod;
-        n_bin <= "0010";
+        in_sel <= "01";
         wait for 0.10*TbPeriod;
-        n_bin <= "0100";
-        wait for 0.10*TbPeriod;
-        n_bin <= "1000";
+        in_sel <= "10";
         wait for TbPeriod;
+
+        -- Stop the clock and hence terminate the simulation
         TbSimEnded <= '1';
         wait;
     end process;

@@ -34,7 +34,7 @@ use iEEE.numeric_std.all;
 entity Counter is
     Port ( clk : in STD_LOGIC;
            reset_n : in STD_LOGIC;
-           salida : out std_logic_vector(1 downto 0));
+           salida : out unsigned(1 downto 0));
 end Counter;
 
 architecture Behavioral of Counter is
@@ -48,5 +48,5 @@ begin
             s_salida <= (s_salida + 1) mod 3;
        end if;     
     end process;
-
+salida <= s_salida;
 end Behavioral;
