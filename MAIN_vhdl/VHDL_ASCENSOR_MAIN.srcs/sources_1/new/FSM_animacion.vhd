@@ -60,43 +60,55 @@ begin
                 if in_motor = "11" then
                     next_state <= s1;
                 elsif in_motor = "10" then 
-                    next_state <= s3;
+                    next_state <= s4;
                 else
                     next_state <= s0;
                 end if;
             when s1 => 
                 if in_motor = "11" then
                     next_state <= s2;
+                elsif in_motor = "10" then
+                    next_state <= s4;
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
              when s2 => 
                 if in_motor = "11" then
                     next_state <= s3;
+                elsif in_motor = "10" then
+                    next_state <= s4;
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
              when s3 => 
                 if in_motor = "11" then
                     next_state <= s1;
+                elsif in_motor = "10" then
+                    next_state <= s4;
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
              when s4 => 
                 if in_motor = "10" then
                     next_state <= s5;
+                elsif in_motor = "11" then
+                    next_state <= s1;
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
              when s5 => 
                 if in_motor = "10" then
                     next_state <= s6;
+                elsif in_motor = "11" then
+                    next_state <= s1;
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
              when s6 => 
                 if in_motor = "10" then
                     next_state <= s4;
+                elsif in_motor = "11" then
+                    next_state <= s1;
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
