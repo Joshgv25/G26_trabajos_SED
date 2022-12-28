@@ -1,4 +1,4 @@
-# ascensor_VHDL_G26
+# G26_trabajos_SED
 # integrantes:
 ## Alvaro Allende Cueva
 ## Joshua Guila Valderueda 
