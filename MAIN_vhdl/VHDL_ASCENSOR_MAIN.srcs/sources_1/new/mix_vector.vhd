@@ -37,39 +37,26 @@ entity mix_vector is
 end mix_vector;
 
 architecture Behavioral of mix_vector is
-    signal aux_vector: std_logic_vector(3 downto 0):= "0001";
+    signal aux_vector: std_logic_vector(3 downto 0) := "0001";
 begin
-    process(clk,bit0,CE)
+    process(clk,bit0,bit1,bit2,bit3,CE)
     begin
-        if rising_edge(bit0) and CE = '1' then --si el bit 0 cambia de 0 a 1
+    if CE = '1' then
+        if rising_edge(bit0) then --si el bit 0 cambia de 0 a 1
             aux_vector <= "0001"; --eliminamos lo que tenia almacenado previamente el vector y
             --le ponemos un 1 en la posicion 0 del vecto(piso 0)
+        elsif rising_edge(bit1) then --si el bit 1 cambia de 0 a 1
+            aux_vector <= "0010";
+        elsif rising_edge(bit2) then --si el bit 2 cambia de 0 a 1
+            aux_vector <= "0100";
+        elsif rising_edge(bit3) then --si el bit 3 cambia de 0 a 1
+            aux_vector <= "1000";
         end if;
+    end if;
     end process;
-    process(clk,bit1,CE)
-    begin
-        if rising_edge(bit1) and CE = '1' then --si el bit 1 cambia de 0 a 1
-            aux_vector <= "0010"; --eliminamos lo que tenia almacenado previamente el vector y
-            --le ponemos un 1 en la posicion 1 del vecto(piso 1)
-        end if;
-    end process;
-    process(clk,bit2,CE)
-    begin
-        if rising_edge(bit2) and CE = '1' then --si el bit 2 cambia de 0 a 1
-            aux_vector <= "0100"; --eliminamos lo que tenia almacenado previamente el vector y
-            --le ponemos un 1 en la posicion 2 del vecto(piso 2)
-        end if;
-    end process;
-    process(clk,bit3,CE)
-    begin
-        if rising_edge(bit3) and CE = '1' then --si el bit 3 cambia de 0 a 1
-            aux_vector <= "1000"; --eliminamos lo que tenia almacenado previamente el vector y
-            --le ponemos un 1 en la posicion 3 del vecto(piso 3)
-        end if;
-    end process;
-    salida: process(aux_vector)
-    begin
-        vec_salida <= aux_vector;--asignamos al vector de salida el vector auxiliar
-    end process;
+   
+    
+  vec_salida <= aux_vector;--asignamos al vector de salida el vector auxiliar
+    
 
 end Behavioral;
