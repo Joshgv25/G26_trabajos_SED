@@ -78,6 +78,20 @@ begin
         wait for 10 * TbPeriod;--espera 10 periodos
         switch_bit <= "1000";
         wait for 20 * TbPeriod;
+         switch_bit <= "0100";
+        wait for 20 * TbPeriod;
+        motor <= "10";--motor activo y bajar
+        wait for 20 * TbPeriod;
+        switch_bit <= "1000";--mal
+        wait for 20 * TbPeriod;
+        switch_bit <= "0001";--mal
+        wait for 20 * TbPeriod;
+        switch_bit <= "0100";--igual--mal
+        wait for 20 * TbPeriod;
+        switch_bit <= "0010";--bien
+        wait for 20 * TbPeriod;
+        switch_bit <= "0001";--mal
+        wait for 20 * TbPeriod;
         motor <= "00";
 
         -- Stop the clock and hence terminate the simulation
