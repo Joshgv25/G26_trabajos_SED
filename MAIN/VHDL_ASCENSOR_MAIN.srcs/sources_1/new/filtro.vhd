@@ -41,6 +41,7 @@ architecture Behavioral of filtro is
     signal switch_ant :std_logic_vector(3 downto 0) := "0001"; --el ascensor comienza en el piso 0
     signal aux_sube: std_logic_vector(3 downto 0);
     signal aux_baja: std_logic_vector(3 downto 0);
+    signal validez_sig: std_logic := '0';
 begin
     edge: process(switch_bit, clk, motor)
     begin
@@ -50,31 +51,33 @@ begin
                 if motor(0) = '1' then --si está subiendo
                     --comparar posicion(entrada) y switch_ant(signal de la arquitectura)
                     if switch_bit /= aux_sube then --si la posicion no es la que deberia ser 
-                        validez<= '0'; --hay fallo
+                        validez_sig<= '0'; --hay fallo
                     else
-                        validez <= '1'; --no hay ningun fallo
+                        validez_sig <= '1'; --no hay ningun fallo
+                        switch_ant <= switch_bit;
                     end if;
                 else --sin motor es 0 (está bajando)
                     if switch_bit /= aux_baja then
-                        validez <= '0'; --sale error
+                        validez_sig <= '0'; --sale error
                     else
-                        validez <= '1'; --no hay ningún fallo
+                        validez_sig <= '1'; --no hay ningún fallo
+                        switch_ant <= switch_bit;
                     end if;
                 end if; 
             end if; 
-            switch_ant <= switch_bit;
         end if;    
     end process;
     
-    switch_teorico:process
+    switch_teorico:process(switch_ant)
     begin
         aux_sube <= switch_ant(2) & switch_ant(1) & switch_ant(0) & '0';
         aux_baja <= '0' & switch_ant(3) & switch_ant(2) & switch_ant(1);
     end process;
     
-    salida:process
+    salida:process(switch_bit, validez_sig)
     begin
         sig_salida <= switch_bit;
+        validez <= validez_sig;
     end process;
 
 end Behavioral;
