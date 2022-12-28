@@ -97,32 +97,22 @@ begin
                         
                            	if pCall>vector_switch then
                            		next_state <= s4; --averia, no puedo subir mientras bajo
-                            elsif pAct=vector_switch then--cuando llego al piso dnd quería ir
+                            elsif pCall=vector_switch then--cuando llego al piso dnd quería ir
                            		next_state <= s0; --paro de bajar y entro en reposo
                             else
                            		next_state <= s2; --sigo bajando, el piso al que quiero ir está más abajo
                            end if;     
                            
-               			when s3 => --estando en el estado de reset o saiendo de emergencia (ir al piso 0)
-                           --if pAct>vector_switch then --ESTE ESTADO ES IMPOSIBLE
-                           		--next_state <= s4; --no puedo bajar, ya estoy en el cero. paso a la averia
-                           --elsif pAct=vector_switch then
-                           		--next_state <= s0; --me mantengo en reposo en el 0
-                            --else
-                           		--next_state <= s1; --subo si se pulsa un boton que no sea el cero
-                           --end if;
+               			when s3 => --estando en el estado de reset o saiendo de emergencia (ir al piso 0)     
                            if vector_switch = "0001" then --cuando hemos llegado al piso 0
                                 next_state <= S0; --pasamos al estado de reposo
                            end if;
-                           
                         when s4 =>
-                        
                         	if rearme='1' then
                            		 next_state <= S3; --si rearmo paso al piso 0 en estado de emergencica
                             else -------------------------------------------------------------------------------------
                             	 next_state <= s4; --si no rearmo seguire en averia-----------------------------------
-                            end if;  ---------------------------------------------------------------------------------
-                            
+                            end if;  ---------------------------------------------------------------------------------   
                         end case;
                   end if;
             end process;
