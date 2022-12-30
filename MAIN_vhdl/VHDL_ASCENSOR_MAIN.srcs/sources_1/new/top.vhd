@@ -72,7 +72,6 @@ architecture Structural of top is
             motor: in std_logic_vector(1 downto 0); 
             switch_bit: in std_logic_vector(3 downto 0);
             clk: in std_logic;
-            validez : out std_logic;
             sig_siguiente: out std_logic_vector(3 downto 0);
             sig_salida: out std_logic_vector(3 downto 0)
         );
@@ -109,7 +108,6 @@ architecture Structural of top is
    			reset_n : in std_logic;  --vuelve al piso 0 siempre
    			pAct:   in std_logic_vector(3 downto 0); --piso actual
         	pCall:  in std_logic_vector(3 downto 0); --piso del que llaman (salida del filtro)
-   			filtro: in std_logic; --si llega un 1, tiene en cuenta a pAct
    			rearme: in std_logic;
      		--salidas
   			motor : out std_logic_vector(1 downto 0); --un bit para el encendido, otro para saber si sube (1) o baja (0)
@@ -144,7 +142,6 @@ architecture Structural of top is
     signal sync_button: std_logic_vector (3 downto 0);
     signal edges, edgeb: std_logic_vector(3 downto 0);
     signal sal_motor: std_logic_vector(1 downto 0); -------------------------------salida del motor de la fsm
-    signal correcto: std_logic;
     signal reloj_div:std_logic;
     signal out_counter:std_logic_vector(1 downto 0);
     signal pisoact_bcd, pisoobj_bcd, anim_bcd: std_logic_vector(6 downto 0);
@@ -156,9 +153,9 @@ begin
         edgecrtls: edge_ctrl port map(CLK => CLK, SYNC_IN => sync_switch(i), EDGE =>edges(i));
         edgecrtlb: edge_ctrl port map(CLK => CLK, SYNC_IN => sync_button(i), EDGE =>edgeb(i));
     end generate;
-    Inst_filtro: filtro port map(motor => sal_motor, switch_bit => edges, clk => CLK , validez => correcto,sig_siguiente => piso_siguiente, sig_salida => vector_filtrado);
+    Inst_filtro: filtro port map(motor => sal_motor, switch_bit => edges, clk => CLK ,sig_siguiente => piso_siguiente, sig_salida => vector_filtrado);
     Inst_MixVector: mix_vector port map(bit0 => edgeb(0), bit1 => edgeb(1), bit2 => edgeb(2), bit3 => edgeb(3),pSig => piso_siguiente,clk => CLK,CE => sal_motor(1), vec_salida => mixed_vector);
-    Inst_FSM_ascensor: FSM_ascensor port map(clk=>CLK,reset_n=>reset_n, pAct=>vector_filtrado,pCall=>mixed_vector,filtro=>correcto,rearme=>rearme,motor=>sal_motor,puerta=>puerta);
+    Inst_FSM_ascensor: FSM_ascensor port map(clk=>CLK,reset_n=>reset_n, pAct=>vector_filtrado,pCall=>mixed_vector,rearme=>rearme,motor=>sal_motor,puerta=>puerta);
     Inst_decod_pisoact: Decod_BCD_Piso port map(n_bin=>vector_filtrado,n_bcd=>pisoact_bcd);
     Inst_decod_pisoobj: Decod_BCD_Piso port map(n_bin=>mixed_vector,n_bcd=>pisoobj_bcd);
     Inst_animacion: FSM_animacion port map(clk=>CLK,reset_n=>reset_n,in_motor=>sal_motor,out_bcd=>anim_bcd);

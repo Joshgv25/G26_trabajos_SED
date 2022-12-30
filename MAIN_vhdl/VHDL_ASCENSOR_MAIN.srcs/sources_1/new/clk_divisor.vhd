@@ -21,10 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -48,7 +45,7 @@ begin
 		if (reset='1') then
 		  cnt:=0;
 		  clk_sig<='0';
-		elsif clk'event then
+		elsif rising_edge(clk) then--------------------------------------------------------------------------
 			cnt:=cnt+1;
             if (cnt=frec) then
 				cnt:=0;

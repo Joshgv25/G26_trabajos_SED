@@ -36,7 +36,6 @@ port(
    			reset_n : in std_logic;  --vuelve al piso 0 siempre
    			pAct:   in std_logic_vector(3 downto 0); --piso por donde vamos pasando(filtrado)(switches)
         	pCall:  in std_logic_vector(3 downto 0); --piso al que queremos ir (botones) 
-   			filtro: in std_logic; --si llega un 1, tiene en cuenta a pAct
    			rearme: in std_logic;
      		--salidas
   			motor : out std_logic_vector(1 downto 0); --un bit para el encendido, otro para saber si sube (1) o baja (0)
@@ -56,58 +55,54 @@ begin
                 if reset_n = '0' then
                 	current_state <= s3; --si pulso el reset voy al estado de emergencia 
                 elsif rising_edge(clk) then
-                	next_state <= current_state;
+                	current_state <= next_state;
                 end if;
           end process;
           
       nxt_state: process(reset_n, pCall, pAct)
           begin
-          	current_state <= next_state;
-               if reset_n = '0' then        --Vuelve a planta 0 siempre, en estado de emergencia
-  	        		   next_state <= s3;
-    	 	   else
-                   case current_state is
-                    	when s0 => --si pCall es 0000 no pasará nada     
-                           if pCall>pAct then
-                           		next_state <= s1; --si piso actual mayor que desde el que llamo, subira
-                           elsif pCall=pAct then
-                           		next_state <= s0; --si llamo desde el piso actual no me muevo
-                           else --si el piso al que hay que ir está por deajo del que estoy
-                                if pCall /= "0000" then
-                           		   next_state <= s2;--me iré al estado de bajada
-                           		end if;
-                           end if;
-                               
-                        when s1 =>
-                            if(pCall>pAct) then
-                           		next_state <= s1; --sigo subiendo porque el piso dnd quiero ir está más arriba
-                            elsif(pCall=pAct) then--cuando llego al piso dnd quería ir
-                           		next_state <= s0; --dejo de subir y entro en reposo
-                            else
-                           		next_state <= s4; --entro en averia, no puedo bajar mientras estoy subiendo
-                            end if;
-                            
-                        when s2 =>
-                           if pCall>pAct then
-                           		next_state <= s4; --averia, no puedo subir mientras bajo
-                            elsif pCall=pAct then--cuando llego al piso dnd quería ir
-                           		next_state <= s0; --paro de bajar y entro en reposo
-                            else
-                           		next_state <= s2; --sigo bajando, el piso al que quiero ir está más abajo
-                           end if;     
-                           
-               			when s3 => --estando en el estado de reset o saiendo de emergencia (ir al piso 0)     
-                           if pAct = "0001" then --cuando hemos llegado al piso 0
-                                next_state <= S0; --pasamos al estado de reposo
-                           end if;
-                        when s4 =>
-                        	if rearme='1' then
-                           		 next_state <= S3; --si rearmo paso al piso 0 en estado de emergencica
-                            else -------------------------------------------------------------------------------------
-                            	 next_state <= s4; --si no rearmo seguire en averia-----------------------------------
-                            end if;  ---------------------------------------------------------------------------------   
-                        end case;
-                  end if;
+          	next_state <= current_state;
+            case current_state is
+                when s0 => --si pCall es 0000 no pasará nada     
+                   if pCall>pAct then
+                        next_state <= s1; --si piso actual mayor que desde el que llamo, subira
+                   elsif pCall=pAct then
+                        next_state <= s0; --si llamo desde el piso actual no me muevo
+                   else --si el piso al que hay que ir está por deajo del que estoy
+                        if pCall /= "0000" then
+                           next_state <= s2;--me iré al estado de bajada
+                        end if;
+                   end if;
+                       
+                when s1 =>
+                    if(pCall>pAct) then
+                        next_state <= s1; --sigo subiendo porque el piso dnd quiero ir está más arriba
+                    elsif(pCall=pAct) then--cuando llego al piso dnd quería ir
+                        next_state <= s0; --dejo de subir y entro en reposo
+                    else
+                        next_state <= s4; --entro en averia, no puedo bajar mientras estoy subiendo
+                    end if;
+                    
+                when s2 =>
+                   if pCall>pAct then
+                        next_state <= s4; --averia, no puedo subir mientras bajo
+                    elsif pCall=pAct then--cuando llego al piso dnd quería ir
+                        next_state <= s0; --paro de bajar y entro en reposo
+                    else
+                        next_state <= s2; --sigo bajando, el piso al que quiero ir está más abajo
+                   end if;     
+                   
+                when s3 => --estando en el estado de reset o saiendo de emergencia (ir al piso 0)     
+                   if pAct = "0001" then --cuando hemos llegado al piso 0
+                        next_state <= S0; --pasamos al estado de reposo
+                   end if;
+                when s4 =>
+                    if rearme='1' then
+                         next_state <= S3; --si rearmo paso al piso 0 en estado de emergencica
+                    else -------------------------------------------------------------------------------------
+                         next_state <= s4; --si no rearmo seguire en averia-----------------------------------
+                    end if;  ---------------------------------------------------------------------------------   
+                 end case;
             end process;
                      
       salida: process(current_state) --si hay cambio en estado actual se actualiza la salida
