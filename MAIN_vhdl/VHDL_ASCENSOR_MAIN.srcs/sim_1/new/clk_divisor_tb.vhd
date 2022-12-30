@@ -47,6 +47,7 @@ component clk_divisor
     signal reset   : std_logic;
     signal clk_out : std_logic;
     signal clk_out2 : std_logic;
+    signal clk_out3 : std_logic;
 
     constant TbPeriod : time := 1000 ns; -- EDIT Put right period here
     signal TbClock : std_logic := '0';
@@ -55,16 +56,22 @@ component clk_divisor
 begin
 
     dut1 : clk_divisor
-    generic map( frec => 2) --El reloj tendra un periodo 2 veces mayor
+    generic map( frec => 1) --El reloj tendra un periodo 2 veces mayor (2*frec veces mayor)
     port map (clk     => clk,
               reset   => reset,
               clk_out => clk_out);
               
     dut2 : clk_divisor
-    generic map( frec => 3) -- El reloj tednrá un periodo 3 veces mayor
+    generic map( frec => 2) -- El reloj tednrá un periodo 4 veces mayor (2*frec veces mayor)
     port map (clk     => clk,
               reset   => reset,
               clk_out => clk_out2);
+    
+    dut3 : clk_divisor
+    generic map( frec => 3) -- El reloj tednrá un periodo 6 veces mayor (2*frec veces mayor)
+    port map (clk     => clk,
+              reset   => reset,
+              clk_out => clk_out3);
 
     -- Clock generation
     TbClock <= not TbClock after TbPeriod/20 when TbSimEnded /= '1' else '0'; --Periodo de 100 ns
@@ -79,7 +86,7 @@ begin
         -- Reset generation
         -- EDIT: Check that reset is really your reset signal
         reset <= '1';
-        wait for 60 ns;
+        wait for 40 ns;
         reset <= '0';
         wait for 100 ns;
 

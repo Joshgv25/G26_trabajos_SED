@@ -65,11 +65,11 @@ begin
         -- EDIT Adapt initialization as needed
         in_sel <= (others => '1');
         wait for 0.10*TbPeriod;
-        in_sel <= "00";
+        in_sel <= "00"; --tenemos seleccionado el display 0
         wait for 0.10*TbPeriod;
-        in_sel <= "01";
+        in_sel <= "01"; --Tenemos seleccionado el display 1
         wait for 0.10*TbPeriod;
-        in_sel <= "10";
+        in_sel <= "10"; --Tenemos seleccionado el display 2
         wait for TbPeriod;
 
         -- Stop the clock and hence terminate the simulation

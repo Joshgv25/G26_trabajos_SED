@@ -63,15 +63,15 @@ begin
     stimuli : process
     begin
         -- EDIT Adapt initialization as needed
-        n_bin <= (others => '0');
+        n_bin <= (others => '0'); --Empezamos comprobando la salida en codigo bcd cuando el codigo de entrada es 0000. La salida deberia ser un guion en bcd
         wait for 0.10*TbPeriod;
-        n_bin <= "0001";
+        n_bin <= "0001"; --Comprobamos la salida cuando la entrada es 0001. La salida deberia mostrar el numero 0 en bcd
         wait for 0.10*TbPeriod;
-        n_bin <= "0010";
+        n_bin <= "0010"; --Comprobamos la salida cuando la entrada es 0010. La salida deberia mostrar el numero 1 en bcd
         wait for 0.10*TbPeriod;
-        n_bin <= "0100";
+        n_bin <= "0100"; --Comprobamos la salida cuando la entrada es 0100. La salida deberia mostrar el numero 2 en bcd
         wait for 0.10*TbPeriod;
-        n_bin <= "1000";
+        n_bin <= "1000"; --Comprobamos la salida cuando la entrada es 1000. La salida deberia mostrar el numero 3 en bcd
         wait for TbPeriod;
         TbSimEnded <= '1';
         wait;

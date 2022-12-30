@@ -158,10 +158,10 @@ begin
     Inst_FSM_ascensor: FSM_ascensor port map(clk=>CLK,reset_n=>reset_n, pAct=>vector_filtrado,pCall=>mixed_vector,rearme=>rearme,motor=>sal_motor,puerta=>puerta);
     Inst_decod_pisoact: Decod_BCD_Piso port map(n_bin=>vector_filtrado,n_bcd=>pisoact_bcd);
     Inst_decod_pisoobj: Decod_BCD_Piso port map(n_bin=>mixed_vector,n_bcd=>pisoobj_bcd);
-    Inst_animacion: FSM_animacion port map(clk=>CLK,reset_n=>reset_n,in_motor=>sal_motor,out_bcd=>anim_bcd);
-    Inst_counter: Counter port map(clk=>reloj_div, reset_n=>reset_n,salida=>out_counter);
-    Inst_decodsel: decod_sel port map(in_sel=>out_counter,out_sel=>disp_sel);
-    Inst_mux: Mux_4a1 port map(sel=>out_counter,in1=>pisoact_bcd,in2=>pisoobj_bcd,in3=>anim_bcd,salida=>disp_bcd);
-    Inst_clkdiv: clk_divisor generic map(frec=>50000000) port map(clk=>CLK,reset=>reset_n,clk_out=>reloj_div);
+    Inst_animacion: FSM_animacion port map(clk=>reloj_div,reset_n=>reset_n,in_motor=>sal_motor,out_bcd=>anim_bcd);
+    Inst_counter: Counter port map(clk=>CLK, reset_n=>reset_n,salida=>out_counter); --El contador sincroniza la informacion mostrada en los displays y el display en el que se muestra
+    Inst_decodsel: decod_sel port map(in_sel=>out_counter,out_sel=>disp_sel); --Selecciona el display donde se muestra la informacion que viene del multiplezor
+    Inst_mux: Mux_4a1 port map(sel=>out_counter,in1=>pisoact_bcd,in2=>pisoobj_bcd,in3=>anim_bcd,salida=>disp_bcd); --Multipleza las distintas entradas que queremos mostrar en los displays
+    Inst_clkdiv: clk_divisor generic map(frec=>50000000) port map(clk=>CLK,reset=>reset_n,clk_out=>reloj_div); --Usamos un divisor de frecuencia para hacer que los cambios en la animación se produzcan a una frecuencia de 1 Hz
      
 end Structural;

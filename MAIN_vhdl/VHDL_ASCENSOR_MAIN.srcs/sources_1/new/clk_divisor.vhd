@@ -27,9 +27,9 @@ use IEEE.NUMERIC_STD.ALL;
 -- any Xilinx leaf cells in this code.
 --library UNISIM;
 --use UNISIM.VComponents.all;
-
+-- Por ejemplo, teniendo un reloj de 1 MHZ, para conseguir un reloj de 2 Hz, el parametro frec deberia valer 250000
 entity clk_divisor is
- Generic (frec: integer:=50000000);  -- default value is for 2hz
+ Generic (frec: integer:=50000000); --El reloj resultante tendrá una frecuencia igual a la original dividida dos veces el parámetro frec.
     Port ( clk : in  STD_LOGIC;
            reset : in  STD_LOGIC;
            clk_out : out  STD_LOGIC);

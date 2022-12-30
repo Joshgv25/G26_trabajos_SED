@@ -30,7 +30,7 @@ use iEEE.numeric_std.all;
 -- any Xilinx leaf cells in this code.
 --library UNISIM;
 --use UNISIM.VComponents.all;
-
+--Para este testbench solamente debemos comprobar que a cada flanco de subida del reloj, el valor del contador aumenta en 1
 entity Counter_tb is
 --  Port ( );
 end Counter_tb;

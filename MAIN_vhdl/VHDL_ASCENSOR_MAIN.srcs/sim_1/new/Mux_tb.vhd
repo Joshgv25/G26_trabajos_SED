@@ -69,7 +69,7 @@ begin
 
     stimuli : process
     begin
-        -- EDIT Adapt initialization as needed
+        -- Inicializamos las entradas
         sel <= (others => '0');
         in1 <= "0000001";
         in2 <= "0000011";
@@ -78,11 +78,11 @@ begin
 
         -- EDIT Add stimuli here
         wait for 0.1*TbPeriod;
-        sel <= "01";
+        sel <= "01"; --La entrada de seleccion multiplexa y muestra en la salida la entrada in1
         wait for 0.1*TbPeriod;
-        sel <= "10";
+        sel <= "10"; --La entrada de seleccion multiplexa y muestra en la salida la entrada in2
         wait for 0.1*TbPeriod;
-        sel <= "11";
+        sel <= "11"; --La entrada de seleccion multiplexa y muestra en la salida la entrada in3
         wait for TbPeriod;
 
         -- Stop the clock and hence terminate the simulation
