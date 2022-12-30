@@ -160,7 +160,7 @@ begin
     Inst_MixVector: mix_vector port map(bit0 => edgeb(0), bit1 => edgeb(1), bit2 => edgeb(2), bit3 => edgeb(3),pSig => piso_siguiente,clk => CLK,CE => sal_motor(1), vec_salida => mixed_vector);
     Inst_FSM_ascensor: FSM_ascensor port map(clk=>CLK,reset_n=>reset_n, pAct=>vector_filtrado,pCall=>mixed_vector,filtro=>correcto,rearme=>rearme,motor=>sal_motor,puerta=>puerta);
     Inst_decod_pisoact: Decod_BCD_Piso port map(n_bin=>vector_filtrado,n_bcd=>pisoact_bcd);
-    Inst_decod_pisoobj: Decod_BCD_Piso port map(n_bin=>edgeb,n_bcd=>pisoobj_bcd);
+    Inst_decod_pisoobj: Decod_BCD_Piso port map(n_bin=>mixed_vector,n_bcd=>pisoobj_bcd);
     Inst_animacion: FSM_animacion port map(clk=>CLK,reset_n=>reset_n,in_motor=>sal_motor,out_bcd=>anim_bcd);
     Inst_counter: Counter port map(clk=>reloj_div, reset_n=>reset_n,salida=>out_counter);
     Inst_decodsel: decod_sel port map(in_sel=>out_counter,out_sel=>disp_sel);
