@@ -33,14 +33,17 @@ entity filtro is
         switch_bit: in std_logic_vector(3 downto 0);
         clk: in std_logic;
         validez : out std_logic;
+        sig_siguiente: out std_logic_vector(3 downto 0);-------------------------------------------------------------
         sig_salida: out std_logic_vector(3 downto 0)
     );
 end filtro;
 
 architecture Behavioral of filtro is
     signal switch_ant :std_logic_vector(3 downto 0) := "0001"; --el ascensor comienza en el piso 0
+    --switch_ant va almacenando los vectores correctos que representan los pisos por donde vayamos pasando
     signal aux_sube: std_logic_vector(3 downto 0);
     signal aux_baja: std_logic_vector(3 downto 0);
+    signal aux: std_logic_vector(3 downto 0);--representa el piso siguiente al que le corresponderia ir el ascensor
     signal validez_sig: std_logic := '0';
 begin
     edge: process(switch_bit, clk, motor)
@@ -56,6 +59,7 @@ begin
                         validez_sig <= '1'; --no hay ningun fallo
                         switch_ant <= switch_bit;
                     end if;
+                    aux <= aux_sube;----------------------------------------------------------------------------------
                 else --sin motor es 0 (está bajando)
                     if switch_bit /= aux_baja then
                         validez_sig <= '0'; --sale error
@@ -63,6 +67,7 @@ begin
                         validez_sig <= '1'; --no hay ningún fallo
                         switch_ant <= switch_bit;
                     end if;
+                    aux <= aux_baja;-----------------------------------------------------------------------------------
                 end if; 
             end if; 
         end if;    
@@ -74,10 +79,7 @@ begin
         aux_baja <= '0' & switch_ant(3) & switch_ant(2) & switch_ant(1);
     end process;
     
-    salida:process(switch_bit, validez_sig)
-    begin
-        sig_salida <= switch_bit;
-        validez <= validez_sig;
-    end process;
+    sig_salida <= switch_ant;
+    validez <= validez_sig;
 
 end Behavioral;
