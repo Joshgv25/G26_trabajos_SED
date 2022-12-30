@@ -36,56 +36,60 @@ entity clk_divisor_tb is
 end clk_divisor_tb;
 
 architecture Behavioral of clk_divisor_tb is
-component clk_divider is
-    Generic (frec: integer:=50000000);  -- default value is for 2hz
-    Port ( clk : in  STD_LOGIC;
-           reset : in  STD_LOGIC;
-           clk_out : out  STD_LOGIC);
-  end component;
+component clk_divisor
+        generic (frec: integer:=50000000);
+        port (clk     : in std_logic;
+              reset   : in std_logic;
+              clk_out : out std_logic);
+    end component;
 
-  signal clk: STD_LOGIC;
-  signal reset: STD_LOGIC;
-  signal clk_out, clk_out2: STD_LOGIC;
+    signal clk     : std_logic;
+    signal reset   : std_logic;
+    signal clk_out : std_logic;
+    signal clk_out2 : std_logic;
 
-  constant clock_period: time := 10 ns;
-  signal stop_the_clock: boolean;
+    constant TbPeriod : time := 1000 ns; -- EDIT Put right period here
+    signal TbClock : std_logic := '0';
+    signal TbSimEnded : std_logic := '0';
 
 begin
 
-  -- Insert values for generic parameters !!
-  uut1: clk_divider generic map ( frec    =>  3)
-                      port map ( clk     => clk,
-                                 reset   => reset,
-                                 clk_out => clk_out );
-  uut2: clk_divider generic map ( frec    =>  2)
-                      port map ( clk     => clk,
-                                 reset   => reset,
-                                 clk_out => clk_out2 );                               
-                                 
-                            
-  stimulus: process
-  begin
-  
-   
-	reset <= '1';
-    wait for 10ns;
-    reset <= '0';
-    wait for 200ns;
+    dut1 : clk_divisor
+    generic map( frec => 2) --El reloj tendra un periodo 2 veces mayor
+    port map (clk     => clk,
+              reset   => reset,
+              clk_out => clk_out);
+              
+    dut2 : clk_divisor
+    generic map( frec => 3) -- El reloj tednrá un periodo 3 veces mayor
+    port map (clk     => clk,
+              reset   => reset,
+              clk_out => clk_out2);
 
-    
+    -- Clock generation
+    TbClock <= not TbClock after TbPeriod/20 when TbSimEnded /= '1' else '0'; --Periodo de 100 ns
 
-    stop_the_clock <= true;
-    wait;
-  end process;
+    -- EDIT: Check that clk is really your main clock signal
+    clk <= TbClock;
 
-  clocking: process
-  begin
-    while not stop_the_clock loop
-      clk <= '0', '1' after clock_period / 2;
-      wait for clock_period;
-    end loop;
-    wait;
-  end process;
+    stimuli : process
+    begin
+        -- EDIT Adapt initialization as needed
+
+        -- Reset generation
+        -- EDIT: Check that reset is really your reset signal
+        reset <= '1';
+        wait for 60 ns;
+        reset <= '0';
+        wait for 100 ns;
+
+        -- EDIT Add stimuli here
+        wait for 100 * TbPeriod;
+
+        -- Stop the clock and hence terminate the simulation
+        TbSimEnded <= '1';
+        wait;
+    end process;
 
 
 

@@ -48,7 +48,7 @@ begin
 		if (reset='1') then
 		  cnt:=0;
 		  clk_sig<='0';
-		elsif clk'event and clk='1' then
+		elsif clk'event then
 			cnt:=cnt+1;
             if (cnt=frec) then
 				cnt:=0;
