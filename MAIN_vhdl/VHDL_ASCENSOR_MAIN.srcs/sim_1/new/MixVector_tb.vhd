@@ -41,6 +41,7 @@ component mix_vector
               bit1       : in std_logic;
               bit2       : in std_logic;
               bit3       : in std_logic;
+              pSig: in std_logic_vector(3 downto 0);
               clk        : in std_logic;
               CE         : in std_logic;
               vec_salida : out std_logic_vector (3 downto 0));
@@ -50,11 +51,12 @@ component mix_vector
     signal bit1       : std_logic;
     signal bit2       : std_logic;
     signal bit3       : std_logic;
+    signal pSig       : std_logic_vector(3 downto 0);
     signal clk        : std_logic;
     signal CE         : std_logic;
     signal vec_salida : std_logic_vector (3 downto 0);
 
-    constant TbPeriod : time := 1000 ns; -- EDIT Put right period here
+    constant TbPeriod : time := 10 ns; -- EDIT Put right period here
     signal TbClock : std_logic := '0';
     signal TbSimEnded : std_logic := '0';
 
@@ -65,12 +67,13 @@ begin
               bit1       => bit1,
               bit2       => bit2,
               bit3       => bit3,
+              pSig       => pSig,
               clk        => clk,
               CE         => CE,
               vec_salida => vec_salida);
 
     -- Clock generation
-    TbClock <= not TbClock after TbPeriod/10 when TbSimEnded /= '1' else '0';
+    TbClock <= not TbClock after TbPeriod/2 when TbSimEnded /= '1' else '0';
 
     -- EDIT: Check that clk is really your main clock signal
     clk <= TbClock;
@@ -88,19 +91,25 @@ begin
         
 
         -- EDIT Add stimuli here
-        wait for 10 ns;
-        bit2 <= '1';
+        wait for 15 ns;
+        bit2 <= '1', '0' after TbPeriod;--lo que dura un estimulo(boton) gracias al edge_ctr
         wait for 30 ns;
-        CE <= '1';
-        wait for 0.1*TbPeriod;
-        bit2<='0';
-        wait for 0.1*TbPeriod;
-        bit1 <= '1';
-        wait for 0.1*TbPeriod;
-        bit3 <= '1';
-        wait for 0.1*TbPeriod;
-        bit1 <= '0';
-        bit3 <= '0';
+        CE <= '1';--el ascensor se pone a funcionar
+        wait for 2 * TbPeriod;--espera dos periodos
+        bit1 <= '1', '0' after TbPeriod;--lo que dura un estimulo(boton) gracias al edge_ctr
+        --como el motor se está moviendo, debería ignorarlo
+        wait for TbPeriod;--espera un periodo
+        pSig <= "0010";--el piso siguiente debería ser el 1(aun estamos subiendo del 0 al 1)
+        bit3 <= '1', '0' after TbPeriod;--lo que dura un estimulo(boton) gracias al edge_ctr
+        --como el ascensor se está moviendo, deberia ignorarlo
+        wait for TbPeriod;--espera un periodo
+        --¿que pasa cuando pulsamos otra vez el botón inicial(este caso el bit2)?
+        --Seria como despulsar un boton del ascensor
+        --Segun el codigo, debería assignar a la salida, la entrada pSig
+        --pSig representa la entrada a dnd nos estábamos dirigiendo(las más cercana)(la siguiente)
+        bit2 <= '1', '0' after TbPeriod;--lo que dura un estimulo(boton) gracias al edge_ctr
+        
+        
       
         wait for 1000 * TbPeriod;
 

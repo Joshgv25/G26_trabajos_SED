@@ -34,7 +34,7 @@ port(
     		--entradas
 			clk :   in  std_logic; --reloj
    			reset_n : in std_logic;  --vuelve al piso 0 siempre
-   			pAct:   in std_logic_vector(3 downto 0); --piso actual (salida del filtro) (switches)
+   			pAct:   in std_logic_vector(3 downto 0); --piso por donde vamos pasando(filtrado)(switches)
         	pCall:  in std_logic_vector(3 downto 0); --piso al que queremos ir (botones) 
    			filtro: in std_logic; --si llega un 1, tiene en cuenta a pAct
    			rearme: in std_logic;
@@ -48,15 +48,9 @@ architecture Behavioral of FSM_ascensor is
 type estados is(s0, s1, s2, s3, s4); --s0 reposo, s1 subir, s2 bajar, s3 emergencia (ir al 0), s4 averia
     signal current_state: estados;       --estado actual
     signal next_state: estados;          --estado siguiente
-    signal vector_switch: std_logic_vector(3 downto 0); --nos indica el piso en el que estamos
-begin 
-      process(filtro)--------------------------------------------------------------------------------------
-      begin 
-      		 if filtro = '1' then 
-        	 	 vector_switch <= pAct;--le asignamos al vector_switch la entrada pAct
-        	 end if; 
-      end process;
- 
+    ------------------------------------------------------------------------signal pCall_aux: std_logic_vector(3 downto 0);
+begin
+      
       state_register: process (reset_n, CLK) --actualiza el estado con los flancos de reloj
           begin
                 if reset_n = '0' then
@@ -66,45 +60,44 @@ begin
                 end if;
           end process;
           
-      nxt_state: process(reset_n, pAct, vector_switch)
+      nxt_state: process(reset_n, pCall, pAct)
           begin
           	current_state <= next_state;
                if reset_n = '0' then        --Vuelve a planta 0 siempre, en estado de emergencia
   	        		   next_state <= s3;
     	 	   else
                    case current_state is
-                    	when s0 =>
-                           
-                           if pCall>vector_switch then
+                    	when s0 => --si pCall es 0000 no pasará nada     
+                           if pCall>pAct then
                            		next_state <= s1; --si piso actual mayor que desde el que llamo, subira
-                           elsif pCall=vector_switch then
+                           elsif pCall=pAct then
                            		next_state <= s0; --si llamo desde el piso actual no me muevo
                            else --si el piso al que hay que ir está por deajo del que estoy
-                           		next_state <= s2;--me iré al estado de bajada
+                                if pCall /= "0000" then
+                           		   next_state <= s2;--me iré al estado de bajada
+                           		end if;
                            end if;
                                
                         when s1 =>
-                        	
-                            if(pCall>vector_switch) then
+                            if(pCall>pAct) then
                            		next_state <= s1; --sigo subiendo porque el piso dnd quiero ir está más arriba
-                            elsif(pCall=vector_switch) then--cuando llego al piso dnd quería ir
+                            elsif(pCall=pAct) then--cuando llego al piso dnd quería ir
                            		next_state <= s0; --dejo de subir y entro en reposo
                             else
                            		next_state <= s4; --entro en averia, no puedo bajar mientras estoy subiendo
                             end if;
                             
                         when s2 =>
-                        
-                           	if pCall>vector_switch then
+                           if pCall>pAct then
                            		next_state <= s4; --averia, no puedo subir mientras bajo
-                            elsif pCall=vector_switch then--cuando llego al piso dnd quería ir
+                            elsif pCall=pAct then--cuando llego al piso dnd quería ir
                            		next_state <= s0; --paro de bajar y entro en reposo
                             else
                            		next_state <= s2; --sigo bajando, el piso al que quiero ir está más abajo
                            end if;     
                            
                			when s3 => --estando en el estado de reset o saiendo de emergencia (ir al piso 0)     
-                           if vector_switch = "0001" then --cuando hemos llegado al piso 0
+                           if pAct = "0001" then --cuando hemos llegado al piso 0
                                 next_state <= S0; --pasamos al estado de reposo
                            end if;
                         when s4 =>
