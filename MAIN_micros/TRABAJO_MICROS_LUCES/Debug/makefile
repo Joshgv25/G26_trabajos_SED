@@ -60,8 +60,8 @@ all: main-build
 main-build: TRABAJO_MICROS_LUCES.elf secondary-outputs
 
 # Tool invocations
-TRABAJO_MICROS_LUCES.elf TRABAJO_MICROS_LUCES.map: $(OBJS) $(USER_OBJS) C:\Users\joshg\Desktop\Trabajo\ VHDL\ascensor_VHDL_G26\MAIN_micros\TRABAJO_MICROS_LUCES\STM32F411VETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "TRABAJO_MICROS_LUCES.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\joshg\Desktop\Trabajo VHDL\ascensor_VHDL_G26\MAIN_micros\TRABAJO_MICROS_LUCES\STM32F411VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TRABAJO_MICROS_LUCES.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+TRABAJO_MICROS_LUCES.elf TRABAJO_MICROS_LUCES.map: $(OBJS) $(USER_OBJS) C:\Users\eloyi\Documents\Github\ascensor_VHDL_G26\MAIN_micros\TRABAJO_MICROS_LUCES\STM32F411VETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "TRABAJO_MICROS_LUCES.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\eloyi\Documents\Github\ascensor_VHDL_G26\MAIN_micros\TRABAJO_MICROS_LUCES\STM32F411VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TRABAJO_MICROS_LUCES.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
