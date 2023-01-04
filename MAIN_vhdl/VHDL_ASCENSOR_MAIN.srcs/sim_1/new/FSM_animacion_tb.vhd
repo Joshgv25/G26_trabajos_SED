@@ -75,7 +75,7 @@ begin
     stimuli : process
     begin
         -- EDIT Adapt initialization as needed
-        in_motor <= "11";
+        in_motor <= "11"; --Motor subiendo
 
         -- Reset generation
         -- EDIT: Check that reset_n is really your reset signal
@@ -86,9 +86,9 @@ begin
 
         -- EDIT Add stimuli here
         wait for 0.3*TbPeriod;
-        in_motor <= "00";
+        in_motor <= "00"; --Motor parado
         wait for 0.3*TbPeriod;
-        in_motor <= "10";
+        in_motor <= "10"; --Motor bajando
         wait for 0.3*TbPeriod;
         assert false;
             report "[SUCCESS]: simulation finished."
