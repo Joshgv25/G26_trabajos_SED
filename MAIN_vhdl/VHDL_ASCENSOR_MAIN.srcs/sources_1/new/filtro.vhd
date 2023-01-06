@@ -17,7 +17,6 @@
 -- Additional Comments:
 -- 
 ----------------------------------------------------------------------------------
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
@@ -48,18 +47,20 @@ begin
     begin
         --comparacion de la señal switch anterior y la posicion
         if rising_edge(clk) then
-            if motor(1) = '1' then --si el motor está activo
-                if motor(0) = '1' then --si está subiendo
-                    --comparar posicion(entrada) y switch_ant(signal de la arquitectura)
-                    if switch_bit = aux_sube then --si la posicion no es la que deberia ser                
-                        switch_ant <= switch_bit;
+            if switch_bit /= "0000" then --se ignora siempre que switch bit sea 0000
+                if motor(1) = '1' then --si el motor está activo
+                    if motor(0) = '1' then --si está subiendo
+                        --comparar posicion(entrada) y switch_ant(signal de la arquitectura)
+                        if switch_bit = aux_sube then --si la posicion es la que debiera ser                
+                            switch_ant <= switch_bit;
+                        end if;
+                        aux <= aux_sube;----------------------------------------------------------------------------------
+                    else --sin motor es 0 (está bajando)
+                        if switch_bit = aux_baja then--si la posicion es la que debiera ser
+                            switch_ant <= switch_bit;
+                        end if;
+                        aux <= aux_baja;-----------------------------------------------------------------------------------
                     end if;
-                    aux <= aux_sube;----------------------------------------------------------------------------------
-                else --sin motor es 0 (está bajando)
-                    if switch_bit = aux_baja then
-                        switch_ant <= switch_bit;
-                    end if;
-                    aux <= aux_baja;-----------------------------------------------------------------------------------
                 end if; 
             end if; 
         end if;    
@@ -72,5 +73,6 @@ begin
     end process;
     
     sig_salida <= switch_ant;
+    sig_siguiente <= aux;
 
 end Behavioral;
