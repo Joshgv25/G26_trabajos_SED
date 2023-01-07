@@ -47,13 +47,16 @@ architecture Behavioral of FSM_ascensor is
 type estados is(s0, s1, s2, s3, s4); --s0 reposo, s1 subir, s2 bajar, s3 emergencia (ir al 0), s4 averia
     signal current_state: estados;       --estado actual
     signal next_state: estados;          --estado siguiente
-    ------------------------------------------------------------------------signal pCall_aux: std_logic_vector(3 downto 0);
+    --------------------------------------------------------------------------------
 begin
       
       state_register: process (reset_n, CLK) --actualiza el estado con los flancos de reloj
           begin
                 if reset_n = '0' then
                 	current_state <= s3; --si pulso el reset voy al estado de emergencia 
+                	if pAct = "0001" then --si hemos llegado al piso 0
+                	   current_state <= s0;--pasamos al reposo
+                	end if;
                 elsif rising_edge(clk) then
                 	current_state <= next_state;
                 end if;

@@ -84,21 +84,21 @@ begin
         pCall <= "1000";--llamamos al piso 3(ultimo)
         --a partir de aqui, se debería de haber pasado al estado s1(subiendo)
         --la salida del motor debería de ser "11"
-        wait for 10 * TbPeriod;
+        wait for 5 * TbPeriod;
         pAct <= "0010";--pasamos del segundo piso
-        wait for 10 * TbPeriod;
+        wait for 5 * TbPeriod;
         pAct <= "0100";--pasamos del tercer piso
-        wait for 10 * TbPeriod;
+        wait for 5 * TbPeriod;
         pAct <= "1000";--llegamos al cuarto piso
         --una vez hemos llegado al piso, se debería haber pasado al estado s0(reposo)
         --la salida del motor deberia ser "00"
-        wait for 10 * TbPeriod;
+        wait for 5 * TbPeriod;
         pCall <= "0001";--llamamos al piso 0
         --a partir de aqui, se deberia de haber pasado al estado s2(bajando)
         --la salida del motor debería de ser "10"
-        wait for 10 * TbPeriod;
+        wait for 5 * TbPeriod;
         pAct <= "0100";--pasamos al tercer piso
-        wait for 10 * TbPeriod;
+        wait for 5 * TbPeriod;
         --Se vuelve a pulsar el botón del piso 0(de pulsar cualquier otro botón se ignoraría)
         pCall<= "0010";--pCall le corresponde el siguiente piso al actual, teniendo en cuenta si la cabina 
         --estabasubiendo o bajando
@@ -113,15 +113,15 @@ begin
         --en este momento, se deberia haber pasado al estado s0(reposo)
         --Por lo tanto, el motor debería estar en "00"
         
-        wait for 20 * TbPeriod;
+        wait for 10 * TbPeriod;
         reset_n <= '0';--hacemos reset
         --en este momento, se debería pasar al estado s3(vuelta al piso 0)
         --el motor deberia estar en "10"(activo y bajando)
-        wait for 15 * TbPeriod;
+        wait for 10 * TbPeriod;
         pAct <= "0001"; --llegamos al piso 0
         --en este momento se deberia haber pasado al estado s0(reposo)
         --el motor deberia estar en "00"  
-        wait for 20 * TbPeriod;      
+        wait for 10 * TbPeriod;      
         
         -- Stop the clock and hence terminate the simulation
         TbSimEnded <= '1';
