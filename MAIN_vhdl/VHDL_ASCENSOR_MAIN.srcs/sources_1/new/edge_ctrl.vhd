@@ -30,6 +30,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- any Xilinx leaf cells in this code.
 --library UNISIM;
 --use UNISIM.VComponents.all;
+--Este componente se usa para conseguir una señal limpia al pulsar un boton o utilizar los switches de la placa de desarrollo.
 
 entity edge_ctrl is
     port (
@@ -40,17 +41,17 @@ entity edge_ctrl is
 end edge_ctrl;
 
 architecture Behavioral of edge_ctrl is
-signal sreg : std_logic_vector(2 downto 0);
+signal sreg : std_logic_vector(2 downto 0); --Señal utilizada para identificar cuando ha ocurrido el ultimo flanco de bajada
 begin
     process (CLK)
     begin
         if rising_edge(CLK) then
-        sreg <= sreg(1 downto 0) & SYNC_IN;
+        sreg <= sreg(1 downto 0) & SYNC_IN; --Vamos pasando los valores del boton/switch y se guardan en sreg
         end if;
     end process;
     
     with sreg select
-        EDGE <= '1' when "100",
+        EDGE <= '1' when "100", --Cuando en un instante dado ocurra que hace dos ciclos de reloj el periferico estaba activo y durante los dos ultimos ciclos ha estado desactivado, significa que ha ocurrido una pulsacion
         '0' when others;
 
 

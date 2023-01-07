@@ -44,8 +44,8 @@ begin
     begin 
        if reset_n = '0' then
             s_salida <= "00";
-       elsif rising_edge (clk) then
-            s_salida <= (s_salida + 1) mod 3;
+       elsif rising_edge (clk) then --A cada pulso de reloj se ira aumentando en 1 el valor de la salida, pero solo tomando valores de entre 0 y 2 decimal
+            s_salida <= (s_salida + 1) mod 3; --Solo toma 3 valores distintos porque es el numero de informacion diferente que queremos mostrar en el display
        end if;     
     end process;
 salida <= s_salida;

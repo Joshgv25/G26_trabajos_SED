@@ -32,7 +32,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity Decod_sel is
-    Port ( in_sel : in STD_LOGIC_VECTOR (1 downto 0);
+    Port ( in_sel : in STD_LOGIC_VECTOR (1 downto 0); --Señal que viene del componente contador 
            out_sel : out STD_LOGIC_VECTOR (7 downto 0)); --( bits, como la cantidad de displays que hay
 end Decod_sel;
 
@@ -41,11 +41,11 @@ signal s_outsel : std_logic_vector (out_sel'range);
 begin
     conversion : process (in_sel)
     begin
-        if in_sel = "00" then
+        if in_sel = "00" then --Cuando la salida del contador sea 0 decimal, se muestra en el display 1 la informacion de la entrada in1 del multiplexor
             s_outsel <= "11111110";
-        elsif in_sel = "01" then
+        elsif in_sel = "01" then --Cuando la salida del contador sea 1 decimal, se muestra en el display 2 la informacion de la entrada in2 del multiplexor
             s_outsel <= "11111101";
-        elsif in_sel = "10" then
+        elsif in_sel = "10" then --Cuando la salida del contador sea 2 decimal, se muestra en el display 3 la informacion de la entrada in3 del multiplexor
             s_outsel <= "11111011";
         else
             s_outsel <= "11111111";

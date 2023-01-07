@@ -51,20 +51,22 @@ begin
             current_state <= next_state;
         end if;
     end process;
-
+--La transicion de estados s1->s2->s3->s1 se produce con la misma entrada, que es 11  y representa el motor subiendo. La diferencia entre estos estados son sus salidas
+--La transicion de estados s4->s5->s6->s4 se produce con la misma entrada, que es 10  y representa el motor bajando. La diferencia entre estos estados son sus salidas
+--La transicion se produce a cada ciclo de reloj. Queremos que los cambios en los displays ocurran cada 0,5 segundos, por lo que el componente FSM_animacion utiliza otra señal de reloj que viene del divisor de frecuencia.
     nextstate_decod: process (in_motor, current_state)
     begin
         next_state <= current_state;
         case current_state is 
-            when s0 => 
-                if in_motor = "11" then
+            when s0 => --El estado s0 corresponde al motor parado
+                if in_motor = "11" then --Si el motor empieza a subir, se pasa al estado s1
                     next_state <= s1;
-                elsif in_motor = "10" then 
+                elsif in_motor = "10" then --Si el motor empieza a bajar, se pasa al estado s4
                     next_state <= s4;
                 else
-                    next_state <= s0;
+                    next_state <= s0; --Si el motor se queda como esta u ocurre otra cosa, se queda donde esta
                 end if;
-            when s1 => 
+            when s1 => --s1 representa subiendo y con una secuencia BCD a la salida determinada
                 if in_motor = "11" then
                     next_state <= s2;
                 elsif in_motor = "10" then
@@ -72,15 +74,15 @@ begin
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
-             when s2 => 
-                if in_motor = "11" then
+             when s2 => --s2 representa subiendo y con una secuencia BCD a la salida determinada
+                if in_motor = "11" then --Si el motor sigue subiendo, se pasa a s3
                     next_state <= s3;
-                elsif in_motor = "10" then
+                elsif in_motor = "10" then --Si el motor se pone a bajar, se pasa a s4
                     next_state <= s4;
-                elsif in_motor = "00" then
+                elsif in_motor = "00" then --Si el motor se para, se pasa a s0
                     next_state <= s0;
                 end if;
-             when s3 => 
+             when s3 => --s3 representa subiendo y con una secuencia BCD a la salida determinada
                 if in_motor = "11" then
                     next_state <= s1;
                 elsif in_motor = "10" then
@@ -88,7 +90,7 @@ begin
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
-             when s4 => 
+             when s4 => --s4 representa bajando y con una secuencia BCD a la salida determinada
                 if in_motor = "10" then
                     next_state <= s5;
                 elsif in_motor = "11" then
@@ -96,7 +98,7 @@ begin
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
-             when s5 => 
+             when s5 => --s5 representa bajando y con una secuencia BCD a la salida determinada
                 if in_motor = "10" then
                     next_state <= s6;
                 elsif in_motor = "11" then
@@ -104,7 +106,7 @@ begin
                 elsif in_motor = "00" then
                     next_state <= s0;
                 end if;
-             when s6 => 
+             when s6 => --s6 representa bajando y con una secuencia BCD a la salida determinada
                 if in_motor = "10" then
                     next_state <= s4;
                 elsif in_motor = "11" then
@@ -117,8 +119,8 @@ begin
         end case;    
     end process;
     
-    salida_decod: process (current_state)
-    begin
+    salida_decod: process (current_state) --Tanto en los estados s1, s2 y s3, el motor esta subiendo, pero se representan codigos BCD distintos. La combinacion de estos diferentes codigos en el tiempo originan una animacion
+    begin --Tanto en los estados s4, s5 y s6 el motor esta bajando, pero cada estado tiene una salida BCD diferente, cuya combinacion en el tiempo origina una animacion
         out_bcd <= (others => '1');
         case current_state is 
             when s0 =>

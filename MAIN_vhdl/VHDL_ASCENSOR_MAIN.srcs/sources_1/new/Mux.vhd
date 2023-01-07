@@ -34,7 +34,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --ya que tendremos 3 fuentes de información por representar.
 --En teoría el multiplexor es de 4 a 1, pero solo vamos a multiplexar 3 entradas
 entity Mux_4a1 is
-    Port ( sel : in STD_LOGIC_VECTOR (1 downto 0); --La entrada de selección vendrá de la salida de un contador
+    Port ( sel : in STD_LOGIC_VECTOR (1 downto 0); --La entrada de selección vendrá de la salida de un contador 
            in1 : in STD_LOGIC_VECTOR (6 downto 0);
            in2 : in STD_LOGIC_VECTOR (6 downto 0);
            in3 : in STD_LOGIC_VECTOR (6 downto 0);
@@ -46,14 +46,14 @@ signal s_salida : std_logic_vector (salida'range);
 begin
     mux : process (sel)
     begin
-        if (sel = "00") then
+        if (sel = "00") then --Cuando la salida del contador sea 0 decimal, se muestra a la salida la entrada in1
             s_salida <= in1;
-        elsif (sel = "01") then
+        elsif (sel = "01") then --Cuando la salida del contador sea 1 decimal, se muestra a la salida la entrada in2
             s_salida <= in2;
-        elsif (sel = "10") then
+        elsif (sel = "10") then --Cuando la salida del contador sea 2 decimal, se muestra a la salida la entrada in3
             s_salida <= in3;
         else
-            s_salida <= "1111110";
+            s_salida <= "1111110"; --Un caso distinto a los mencionados anteriormente significará que ha habido un error. 
         end if;
     end process;
 salida <= s_salida;

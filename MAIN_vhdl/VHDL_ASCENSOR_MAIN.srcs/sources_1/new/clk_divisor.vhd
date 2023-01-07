@@ -46,8 +46,8 @@ begin
 		  cnt:=0;
 		  clk_sig<='0';
 		elsif rising_edge(clk) then--------------------------------------------------------------------------
-			cnt:=cnt+1;
-            if (cnt=frec) then
+			cnt:=cnt+1; --A cada flanco de subida del reloj original se va incrementando el valor de cnt de 1 en 1
+            if (cnt=frec) then --Cuando cnt llegue al valor de frec se producirá un cambio en la salida, que es el reloj resultante 
 				cnt:=0;
 				clk_sig<=not(clk_sig);
 			end if;
