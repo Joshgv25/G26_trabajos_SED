@@ -48,6 +48,7 @@ UART_HandleTypeDef huart6;
 /* USER CODE BEGIN PV */
 char BuffRx[8];
 int contar = 0;
+int flag = 0;
 
 uint32_t ADC_val, ADC_buff; //con dma de 32
 uint32_t umbral = 1500;
@@ -76,6 +77,16 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 }
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if (GPIO_Pin == GPIO_PIN_0){
+		if(flag == 0)
+			flag = 1;
+		else
+			flag = 0;
+	}
+
+}
 
 /* USER CODE END 0 */
 
@@ -361,7 +372,23 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PA0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PE10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PD9 PD12 PD13 PD14 */
   GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14;
@@ -375,6 +402,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
 }
 
@@ -409,16 +440,27 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef * hadc){
 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, 1);
 			if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_10)){
 				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
+				HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, 1);
 				val = 1;
 			}
 			else{
 				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+				HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, 0);
 				val = 0;
 			}
 		}
 		else{
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, 0);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+			if(flag == 1){//se ha pulsado el boton
+				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, 1);
+				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
+				HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, 1);
+			}
+			else{//se ha vuelto a pulsar o aun no se ha pulsado
+				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, 0);
+				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+				HAL_GPIO_WritePin(GPIOE, GPIO_PIN_10, 0);
+			}
+
 		}
 	}
 }
