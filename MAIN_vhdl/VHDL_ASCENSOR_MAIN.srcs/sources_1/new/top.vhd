@@ -80,25 +80,28 @@ architecture Structural of top is
     component Counter 
          Port ( clk : in STD_LOGIC;
            reset_n : in STD_LOGIC;
-           salida : out std_logic_vector(1 downto 0));
+           salida : out std_logic_vector(1 downto 0)
+           );
     end component;
     
     component Decod_BCD_Piso
          Port ( n_bin : in STD_LOGIC_VECTOR (3 downto 0);
-           n_bcd : out STD_LOGIC_VECTOR (6 downto 0));
-           
+           n_bcd : out STD_LOGIC_VECTOR (6 downto 0)
+           ); 
     end component;
 
     component Decod_sel
          Port ( in_sel : in STD_LOGIC_VECTOR (1 downto 0);
-           out_sel : out STD_LOGIC_VECTOR (7 downto 0)); --( bits, como la cantidad de displays que hay
+           out_sel : out STD_LOGIC_VECTOR (7 downto 0)--( bits, como la cantidad de displays que hay
+           ); 
     end component;
     
     component FSM_animacion
         Port ( clk : in STD_LOGIC;
            reset_n : in STD_LOGIC;
            in_motor : in STD_LOGIC_VECTOR (1 downto 0);
-           out_bcd : out STD_LOGIC_VECTOR (6 downto 0));
+           out_bcd : out STD_LOGIC_VECTOR (6 downto 0)
+           );
     end component;
     
     component FSM_ascensor

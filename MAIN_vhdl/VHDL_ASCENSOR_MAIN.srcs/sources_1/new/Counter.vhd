@@ -34,7 +34,8 @@ use iEEE.numeric_std.all;
 entity Counter is
     Port ( clk : in STD_LOGIC;
            reset_n : in STD_LOGIC;
-           salida : out unsigned(1 downto 0));
+           salida : out std_logic_vector(1 downto 0)
+           );
 end Counter;
 
 architecture Behavioral of Counter is
@@ -48,5 +49,5 @@ begin
             s_salida <= (s_salida + 1) mod 3; --Solo toma 3 valores distintos porque es el numero de informacion diferente que queremos mostrar en el display
        end if;     
     end process;
-salida <= s_salida;
+salida <= std_logic_vector(s_salida);
 end Behavioral;
