@@ -127,7 +127,7 @@ architecture Structural of top is
     end component;
     
     component clk_divisor
-         Generic (frec: integer:=50000000);  -- default value is for 2hz
+         Generic (frec: integer:=500000);  -- default value is for 1hz
          Port ( clk : in  STD_LOGIC;
            reset : in  STD_LOGIC;
            clk_out : out  STD_LOGIC);
@@ -165,6 +165,6 @@ begin
     Inst_counter: Counter port map(clk=>CLK, reset_n=>reset_n,salida=>out_counter); --El contador sincroniza la informacion mostrada en los displays y el display en el que se muestra
     Inst_decodsel: decod_sel port map(in_sel=>out_counter,out_sel=>disp_sel); --Selecciona el display donde se muestra la informacion que viene del multiplezor
     Inst_mux: Mux_4a1 port map(sel=>out_counter,in1=>pisoact_bcd,in2=>pisoobj_bcd,in3=>anim_bcd,salida=>disp_bcd); --Multipleza las distintas entradas que queremos mostrar en los displays
-    Inst_clkdiv: clk_divisor generic map(frec=>50000000) port map(clk=>CLK,reset=>reset_n,clk_out=>reloj_div); --Usamos un divisor de frecuencia para hacer que los cambios en la animación se produzcan a una frecuencia de 1 Hz
+    Inst_clkdiv: clk_divisor generic map(frec=>1) port map(clk=>CLK,reset=>reset_n,clk_out=>reloj_div); --Usamos un divisor de frecuencia para hacer que los cambios en la animación se produzcan a una frecuencia de 1 Hz
      
 end Structural;

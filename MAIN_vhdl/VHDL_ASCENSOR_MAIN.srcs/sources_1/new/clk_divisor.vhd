@@ -42,7 +42,7 @@ begin
   process (clk,reset)
   variable cnt:integer;
   begin
-		if (reset='1') then
+		if (reset='0') then
 		  cnt:=0;
 		  clk_sig<='0';
 		elsif rising_edge(clk) then--------------------------------------------------------------------------
