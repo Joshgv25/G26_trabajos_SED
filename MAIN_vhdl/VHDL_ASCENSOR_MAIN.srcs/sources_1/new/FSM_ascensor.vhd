@@ -54,15 +54,16 @@ begin
           begin
                 if reset_n = '0' then
                 	current_state <= s3; --si pulso el reset voy al estado de emergencia 
-                	if pAct = "0001" then --si hemos llegado al piso 0
-                	   current_state <= s0;--pasamos al reposo
-                	end if;
+                	--if pAct = "0001" then --si hemos llegado al piso 0
+                	   --current_state <= s0;--pasamos al reposo
+                	
                 elsif rising_edge(clk) then
                 	current_state <= next_state;
                 end if;
           end process;
+      
           
-      nxt_state: process(reset_n, pCall, pAct)
+      nxt_state: process(reset_n, pCall, pAct,current_state,rearme)
           begin
           	next_state <= current_state;
             case current_state is
@@ -96,7 +97,7 @@ begin
                    end if;     
                    
                 when s3 => --estando en el estado de reset o saiendo de emergencia (ir al piso 0)     
-                   if pAct = "0001" then --cuando hemos llegado al piso 0
+                   if pCall = "0001" then --cuando hemos llegado al piso 0
                         next_state <= S0; --pasamos al estado de reposo
                    end if;
                 when s4 =>

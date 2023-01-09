@@ -32,6 +32,7 @@ entity mix_vector is
         bit3: in std_logic;
         pSig: in std_logic_vector(3 downto 0);--------------------------------------------
         clk: in std_logic;
+        reset_n : in std_logic;
         CE: in std_logic;
         vec_salida: out std_logic_vector(3 downto 0)
       );
@@ -42,7 +43,9 @@ architecture Behavioral of mix_vector is
 begin
     process(clk,bit0,bit1,bit2,bit3,CE)
     begin
-    if rising_edge(clk) then
+    if reset_n = '0' then
+        aux_vector <= "0001";
+    elsif rising_edge(clk) then
         if CE = '0' then --estando el motor apagado
             if bit0 = '1' then --si el bit 0 cambia de 0 a 1
                 aux_vector <= "0001"; --eliminamos lo que tenia almacenado previamente el vector y

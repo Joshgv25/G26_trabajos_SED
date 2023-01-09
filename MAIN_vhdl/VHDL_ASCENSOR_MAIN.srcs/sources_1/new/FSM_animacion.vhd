@@ -126,17 +126,17 @@ begin
             when s0 =>
                 out_bcd <= "1111110";
             when s1 =>
-                out_bcd <= "0010101";
+                out_bcd <= "1101010";
             when s2 =>
-                out_bcd <= "1110110";
+                out_bcd <= "0001001";
             when s3 =>
-                out_bcd <= "0001000";
+                out_bcd <= "1110111";
             when s4 =>
-                out_bcd <= "0100011";
+                out_bcd <= "1011100";
             when s5 =>
-                out_bcd <= "0111110";
+                out_bcd <= "1000001";
             when s6 =>
-                out_bcd <= "1000000";
+                out_bcd <= "0111111";
         end case;
     end process;
 end Behavioral;

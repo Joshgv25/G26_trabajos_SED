@@ -34,27 +34,36 @@ use IEEE.STD_LOGIC_1164.ALL;
 --ya que tendremos 3 fuentes de información por representar.
 --En teoría el multiplexor es de 4 a 1, pero solo vamos a multiplexar 3 entradas
 entity Mux_4a1 is
-    Port ( sel : in STD_LOGIC_VECTOR (1 downto 0); --La entrada de selección vendrá de la salida de un contador 
+    Port ( clk : in std_logic;
+           sel : in STD_LOGIC_VECTOR (1 downto 0); --La entrada de selección vendrá de la salida de un contador 
            in1 : in STD_LOGIC_VECTOR (6 downto 0);
            in2 : in STD_LOGIC_VECTOR (6 downto 0);
            in3 : in STD_LOGIC_VECTOR (6 downto 0);
-           salida : out STD_LOGIC_VECTOR (6 downto 0));
+           salida : out STD_LOGIC_VECTOR (6 downto 0);
+           salida_sel : out STD_LOGIC_VECTOR (7 downto 0));
 end Mux_4a1;
 
 architecture Behavioral of Mux_4a1 is
 signal s_salida : std_logic_vector (salida'range);
+signal sel_salida : std_logic_vector (salida_sel'range);
 begin
-    mux : process (sel)
+    mux : process (sel,clk)
     begin
-        if (sel = "00") then --Cuando la salida del contador sea 0 decimal, se muestra a la salida la entrada in1
-            s_salida <= in1;
-        elsif (sel = "01") then --Cuando la salida del contador sea 1 decimal, se muestra a la salida la entrada in2
-            s_salida <= in2;
-        elsif (sel = "10") then --Cuando la salida del contador sea 2 decimal, se muestra a la salida la entrada in3
-            s_salida <= in3;
-        else
-            s_salida <= "1111110"; --Un caso distinto a los mencionados anteriormente significará que ha habido un error. 
-        end if;
+    case  sel is 
+        when "00" => 
+             s_salida <= in1;
+            sel_salida <= "11111110";
+        when "01" => 
+             s_salida <= in2;
+            sel_salida <= "11111101";
+        when "10" =>
+             s_salida <= in3;
+            sel_salida <= "11111011";
+        when others => 
+             s_salida <= "1111110";
+            sel_salida <= "11110111";
+    end case;
     end process;
 salida <= s_salida;
+salida_sel <= sel_salida;
 end Behavioral;

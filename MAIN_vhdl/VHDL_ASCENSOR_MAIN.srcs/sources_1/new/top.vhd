@@ -62,6 +62,7 @@ architecture Structural of top is
             bit3: in std_logic;
             pSig: in std_logic_vector(3 downto 0);
             clk: in std_logic;
+            reset_n : std_logic;
             CE: in std_logic;
             vec_salida: out std_logic_vector(3 downto 0)
       );
@@ -119,11 +120,13 @@ architecture Structural of top is
     end component;
     
     component Mux_4a1 
-         Port ( sel : in STD_LOGIC_VECTOR (1 downto 0); --La entrada de selección vendrá de la salida de un contador
+         Port ( clk : in std_logic;
+           sel : in STD_LOGIC_VECTOR (1 downto 0); --La entrada de selección vendrá de la salida de un contador
            in1 : in STD_LOGIC_VECTOR (6 downto 0);
            in2 : in STD_LOGIC_VECTOR (6 downto 0);
            in3 : in STD_LOGIC_VECTOR (6 downto 0);
-           salida : out STD_LOGIC_VECTOR (6 downto 0));
+           salida : out STD_LOGIC_VECTOR (6 downto 0);
+           salida_sel : out std_logic_vector(7 downto 0));
     end component;
     
     component clk_divisor
@@ -145,7 +148,7 @@ architecture Structural of top is
     signal sync_button: std_logic_vector (3 downto 0);
     signal edges, edgeb: std_logic_vector(3 downto 0);
     signal sal_motor: std_logic_vector(1 downto 0); -------------------------------salida del motor de la fsm
-    signal reloj_div:std_logic;
+    signal reloj_div, reloj_count:std_logic;
     signal out_counter:std_logic_vector(1 downto 0);
     signal pisoact_bcd, pisoobj_bcd, anim_bcd: std_logic_vector(6 downto 0);
     --variable count: natural;
@@ -157,14 +160,15 @@ begin
         edgecrtlb: edge_ctrl port map(CLK => CLK, SYNC_IN => sync_button(i), EDGE =>edgeb(i));
     end generate;
     Inst_filtro: filtro port map(motor => sal_motor, switch_bit => edges, clk => CLK ,sig_siguiente => piso_siguiente, sig_salida => vector_filtrado);
-    Inst_MixVector: mix_vector port map(bit0 => edgeb(0), bit1 => edgeb(1), bit2 => edgeb(2), bit3 => edgeb(3),pSig => piso_siguiente,clk => CLK,CE => sal_motor(1), vec_salida => mixed_vector);
+    Inst_MixVector: mix_vector port map(bit0 => edgeb(0), bit1 => edgeb(1), bit2 => edgeb(2), bit3 => edgeb(3),pSig => piso_siguiente,clk => CLK,CE => sal_motor(1),reset_n => reset_n, vec_salida => mixed_vector);
     Inst_FSM_ascensor: FSM_ascensor port map(clk=>CLK,reset_n=>reset_n, pAct=>vector_filtrado,pCall=>mixed_vector,rearme=>rearme,motor=>sal_motor,puerta=>puerta);
     Inst_decod_pisoact: Decod_BCD_Piso port map(n_bin=>vector_filtrado,n_bcd=>pisoact_bcd);
     Inst_decod_pisoobj: Decod_BCD_Piso port map(n_bin=>mixed_vector,n_bcd=>pisoobj_bcd);
     Inst_animacion: FSM_animacion port map(clk=>reloj_div,reset_n=>reset_n,in_motor=>sal_motor,out_bcd=>anim_bcd);
-    Inst_counter: Counter port map(clk=>CLK, reset_n=>reset_n,salida=>out_counter); --El contador sincroniza la informacion mostrada en los displays y el display en el que se muestra
-    Inst_decodsel: decod_sel port map(in_sel=>out_counter,out_sel=>disp_sel); --Selecciona el display donde se muestra la informacion que viene del multiplezor
-    Inst_mux: Mux_4a1 port map(sel=>out_counter,in1=>pisoact_bcd,in2=>pisoobj_bcd,in3=>anim_bcd,salida=>disp_bcd); --Multipleza las distintas entradas que queremos mostrar en los displays
-    Inst_clkdiv: clk_divisor generic map(frec=>1) port map(clk=>CLK,reset=>reset_n,clk_out=>reloj_div); --Usamos un divisor de frecuencia para hacer que los cambios en la animación se produzcan a una frecuencia de 1 Hz
+    Inst_counter: Counter port map(clk=>reloj_count, reset_n=>reset_n,salida=>out_counter); --El contador sincroniza la informacion mostrada en los displays y el display en el que se muestra
+    --Inst_decodsel: decod_sel port map(in_sel=>out_counter,out_sel=>disp_sel); --Selecciona el display donde se muestra la informacion que viene del multiplezor
+    Inst_mux: Mux_4a1 port map(clk => reloj_count,sel=>out_counter,in1=>pisoact_bcd,in2=>pisoobj_bcd,in3=>anim_bcd,salida=>disp_bcd,salida_sel=>disp_sel); --Multipleza las distintas entradas que queremos mostrar en los displays
+    Inst_clkdiv: clk_divisor generic map(frec=>50000000) port map(clk=>CLK,reset=>reset_n,clk_out=>reloj_div); --Usamos un divisor de frecuencia para hacer que los cambios en la animación se produzcan a una frecuencia de 1 Hz
+    Inst_clkdiv2: clk_divisor generic map(frec =>150000) port map(clk=>CLK,reset=>reset_n,clk_out=>reloj_count);
      
 end Structural;
