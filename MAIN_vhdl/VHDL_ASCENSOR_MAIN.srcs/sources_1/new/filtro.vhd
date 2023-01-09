@@ -54,12 +54,12 @@ begin
                         if switch_bit = aux_sube then --si la posicion es la que debiera ser                
                             switch_ant <= switch_bit;
                         end if;
-                        aux <= aux_sube;----------------------------------------------------------------------------------
+                        ----------------------------------------------------------------------------------
                     else --sin motor es 0 (está bajando)
                         if switch_bit = aux_baja then--si la posicion es la que debiera ser
                             switch_ant <= switch_bit;
                         end if;
-                        aux <= aux_baja;-----------------------------------------------------------------------------------
+                        -----------------------------------------------------------------------------------
                     end if;
                 end if; 
             end if; 
@@ -72,7 +72,16 @@ begin
         aux_baja <= '0' & switch_ant(3) & switch_ant(2) & switch_ant(1);
     end process;
     
+    asig_siguiente: process (aux_sube,aux_baja)
+    begin
+        if motor = "11" then
+            sig_siguiente <= aux_sube;
+        elsif motor = "10" then     
+            sig_siguiente <= aux_baja;
+        end if;
+    end process;
+    
     sig_salida <= switch_ant;
-    sig_siguiente <= aux;
+    
 
 end Behavioral;
