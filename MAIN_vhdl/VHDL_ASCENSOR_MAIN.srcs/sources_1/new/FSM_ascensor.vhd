@@ -54,8 +54,6 @@ begin
           begin
                 if reset_n = '0' then
                 	current_state <= s3; --si pulso el reset voy al estado de emergencia 
-                	--if pAct = "0001" then --si hemos llegado al piso 0
-                	   --current_state <= s0;--pasamos al reposo
                 	
                 elsif rising_edge(clk) then
                 	current_state <= next_state;
@@ -103,9 +101,9 @@ begin
                 when s4 =>
                     if rearme='1' then
                          next_state <= S3; --si rearmo paso al piso 0 en estado de emergencica
-                    else -------------------------------------------------------------------------------------
-                         next_state <= s4; --si no rearmo seguire en averia-----------------------------------
-                    end if;  ---------------------------------------------------------------------------------   
+                    else 
+                         next_state <= s4; --si no rearmo seguire en averia-
+                    end if;    
                  end case;
             end process;
                      
